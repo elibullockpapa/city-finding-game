@@ -3,6 +3,8 @@
 
 import { useCallback, useState } from "react";
 
+import { Marker3D } from "./marker-3d";
+
 import { Map3D, Map3DCameraProps } from "@/components/3DMap/map-3d";
 
 const INITIAL_VIEW_PROPS = {
@@ -15,16 +17,27 @@ const INITIAL_VIEW_PROPS = {
 
 export default function CityFindingGlobe() {
     const [viewProps, setViewProps] = useState(INITIAL_VIEW_PROPS);
+    const [selectedMarker, setSelectedMarker] =
+        useState<google.maps.LatLngAltitudeLiteral | null>(null);
 
     const handleCameraChange = useCallback((props: Map3DCameraProps) => {
         setViewProps((oldProps) => ({ ...oldProps, ...props }));
     }, []);
 
+    const handleMapClick = useCallback(
+        (position: google.maps.LatLngAltitude) => {
+            setSelectedMarker(position);
+        },
+        [],
+    );
+
     return (
         <Map3D
             {...viewProps}
-            //defaultLabelsDisabled
             onCameraChange={handleCameraChange}
-        />
+            onClick={handleMapClick}
+        >
+            {selectedMarker && <Marker3D position={selectedMarker} />}
+        </Map3D>
     );
 }

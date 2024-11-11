@@ -18,6 +18,7 @@ import "./map-3d-types";
 
 export type Map3DProps = google.maps.maps3d.Map3DElementOptions & {
     onCameraChange?: (cameraProps: Map3DCameraProps) => void;
+    onClick: (position: google.maps.LatLngAltitude) => void;
     children?: React.ReactNode;
 };
 
@@ -53,7 +54,15 @@ export const Map3D = forwardRef(
             });
         }, []);
 
-        const { center, heading, tilt, range, roll, children, ...map3dOptions } = props;
+        const {
+            center,
+            // heading,
+            // tilt,
+            // range,
+            // roll,
+            // children,
+            ...map3dOptions
+        } = props;
 
         useDeepCompareEffect(() => {
             if (!map3DElement) return;
@@ -74,6 +83,24 @@ export const Map3D = forwardRef(
 
             return [lat, lng, altitude].join(",");
         }, [center?.lat, center?.lng, center?.altitude]);
+
+        useEffect(() => {
+            if (!map3DElement || !props.onClick) return;
+
+            // Cast the click handler to EventListener type to satisfy addEventListener's type requirements
+            const handleClick = ((
+                event: google.maps.maps3d.LocationClickEvent,
+            ) => {
+                if (event.position) {
+                    props.onClick(event.position);
+                }
+            }) as EventListener;
+
+            map3DElement.addEventListener("gmp-click", handleClick);
+
+            return () =>
+                map3DElement.removeEventListener("gmp-click", handleClick);
+        }, [map3DElement, props.onClick]);
 
         if (!customElementsReady) return null;
 
