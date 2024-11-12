@@ -30,28 +30,28 @@ const DIFFICULTY_SETTINGS: Record<string, DifficultySettings> = {
         minPop: 2_000_000,
         cities: 5,
         noLabels: false,
-        coverImage: "/images/generic-globe.png",
+        coverImage: "/images/quebec.png",
     },
     hard: {
         name: "Hard Mode",
         minPop: 1_000_000,
         cities: 5,
         noLabels: false,
-        coverImage: "/images/generic-globe.png",
+        coverImage: "/images/gqeberha.png",
     },
     extreme: {
         name: "Extreme Mode",
         minPop: 100_000,
         cities: 5,
         noLabels: false,
-        coverImage: "/images/generic-globe.png",
+        coverImage: "/images/alcalá-de-henares.png",
     },
     impossible: {
         name: "Impossible Mode",
         minPop: 50_000,
         cities: 5,
         noLabels: true,
-        coverImage: "/images/generic-globe.png",
+        coverImage: "/images/warwick.png",
     },
     usa: {
         name: "USA Mode",
@@ -101,7 +101,7 @@ export default function Home() {
     };
 
     return (
-        <div className="h-full flex flex-col items-center justify-center bg-orange-900/5 overflow-auto">
+        <div className="h-full flex flex-col items-center justify-center overflow-auto">
             <div className="grid grid-cols-12 gap-4 p-4 w-full max-w-7xl">
                 {Object.entries(DIFFICULTY_SETTINGS).map(
                     ([difficulty, settings]) => (
