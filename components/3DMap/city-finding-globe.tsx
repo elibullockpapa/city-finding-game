@@ -146,6 +146,7 @@ export default function CityFindingGlobe() {
                     </div>,
                     {
                         toastId: `correct-${newCityCount}`,
+                        autoClose: 1000,
                     },
                 );
                 loadNewCity();
@@ -159,6 +160,7 @@ export default function CityFindingGlobe() {
                 </div>,
                 {
                     toastId: `error-${Math.round(distance)}`,
+                    autoClose: 3000,
                 },
             );
         }
@@ -218,16 +220,10 @@ export default function CityFindingGlobe() {
     return (
         <div className="relative w-full h-dvh">
             <ToastContainer
-                closeOnClick
                 draggable
                 hideProgressBar
-                pauseOnFocusLoss
                 pauseOnHover
-                autoClose={3000}
-                limit={3} // Limit the number of toasts shown at once
-                newestOnTop={true} // Change to false to prevent jumping
                 position="bottom-right"
-                rtl={false}
                 theme="colored"
                 transition={Bounce}
             />
