@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
 import clsx from "clsx";
 import { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/react";
 
 import { Providers } from "./providers";
 
@@ -32,6 +33,7 @@ export default function RootLayout({
                     {/* <Navbar /> */}
                     <main>{children}</main>
                 </Providers>
+                <Analytics />
             </body>
         </html>
     );
