@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { Providers } from "./providers";
 
 import { fontSans } from "@/config/fonts";
+import { Navbar } from "@/components/navbar";
 
 export const metadata: Metadata = {
     title: "City Finding Game",
@@ -30,7 +31,7 @@ export default function RootLayout({
                 <Providers
                     themeProps={{ attribute: "class", defaultTheme: "light" }}
                 >
-                    {/* <Navbar /> */}
+                    <Navbar />
                     <main>{children}</main>
                 </Providers>
                 <Analytics />

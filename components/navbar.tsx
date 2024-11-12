@@ -21,7 +21,7 @@ export const Navbar = () => {
                         className="flex justify-start items-center gap-1"
                         href="/"
                     >
-                        <p className="text-xl pr">🌍</p>
+                        <p className="text-xl pr">🌍 City Finding Game</p>
                     </NextLink>
                 </NavbarBrand>
             </NavbarContent>

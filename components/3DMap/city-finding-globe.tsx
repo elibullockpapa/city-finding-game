@@ -21,8 +21,6 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Pagination } from "swiper/modules";
 
-import { Navbar } from "../navbar";
-
 import { Marker3D } from "./marker-3d";
 
 import { Map3D, Map3DCameraProps } from "@/components/3DMap/map-3d";
@@ -221,7 +219,6 @@ export default function CityFindingGlobe() {
                 theme="colored"
                 transition={Bounce}
             />
-            <Navbar />
             <Map3D
                 {...viewProps}
                 defaultLabelsDisabled={disableMapLabels}
