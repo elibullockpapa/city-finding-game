@@ -1,3 +1,3 @@
-# Google3DMapsChallenge
+# cityFindingGame
 
-deployment check 2
+deployment check 1
