@@ -144,6 +144,9 @@ export default function CityFindingGlobe() {
                         <p>Correct!</p>
                         <p className="text-sm">{`Going to city ${newCityCount + 1} of ${citiesToFind}...`}</p>
                     </div>,
+                    {
+                        toastId: `correct-${newCityCount}`,
+                    },
                 );
                 loadNewCity();
             }
@@ -154,6 +157,9 @@ export default function CityFindingGlobe() {
                     <p>{`${Math.round(distance)} miles away from ${currentCity.name}`}</p>
                     <p className="text-sm">+5 second penalty</p>
                 </div>,
+                {
+                    toastId: `error-${Math.round(distance)}`,
+                },
             );
         }
     };
@@ -215,10 +221,11 @@ export default function CityFindingGlobe() {
                 closeOnClick
                 draggable
                 hideProgressBar
-                newestOnTop
                 pauseOnFocusLoss
                 pauseOnHover
                 autoClose={3000}
+                limit={3} // Limit the number of toasts shown at once
+                newestOnTop={true} // Change to false to prevent jumping
                 position="bottom-right"
                 rtl={false}
                 theme="colored"
