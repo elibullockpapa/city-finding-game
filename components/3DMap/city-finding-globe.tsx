@@ -15,6 +15,11 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import { Pagination } from "swiper/modules";
 
 import { Navbar } from "../navbar";
 
@@ -26,12 +31,19 @@ import { calculateDistance } from "@/functions/distance";
 
 // Begin game far above New York City
 const INITIAL_VIEW_PROPS = {
-    center: { lat: 40.7079, lng: -74.0132, altitude: 20000000 },
+    center: { lat: 40.7079, lng: -74.0132, altitude: 200000 },
     range: 0,
     heading: 0,
     tilt: 0,
     roll: 0,
 };
+
+interface CityInfo {
+    name: string;
+    image?: string;
+    description?: string;
+    wikiLink?: string;
+}
 
 export default function CityFindingGlobe() {
     const router = useRouter();
@@ -46,6 +58,8 @@ export default function CityFindingGlobe() {
     const [showPopulation, setShowPopulation] = useState(false);
     const { isOpen, onOpen } = useDisclosure();
     const [isGameComplete, setIsGameComplete] = useState(false);
+    const [completedCities, setCompletedCities] = useState<City[]>([]);
+    const [cityInfo, setCityInfo] = useState<CityInfo[]>([]);
 
     // Parse URL parameters with fallback values
     const minPopulation = Number(searchParams.get("minPop")) || 500_000;
@@ -114,6 +128,8 @@ export default function CityFindingGlobe() {
         if (distance <= 50) {
             const newCityCount = cityCount + 1;
 
+            setCompletedCities((prev) => [...prev, currentCity]);
+
             setCityCount(newCityCount);
 
             if (newCityCount >= citiesToFind) {
@@ -149,6 +165,46 @@ export default function CityFindingGlobe() {
         },
         [],
     );
+
+    useEffect(() => {
+        const fetchCityInfo = async () => {
+            if (isGameComplete && completedCities.length > 0) {
+                const info = await Promise.all(
+                    completedCities.map(async (city) => {
+                        try {
+                            // Build a more specific search query
+                            let searchQuery = city.name;
+
+                            if (city.stateCode) {
+                                searchQuery += `, ${city.stateCode}`;
+                            }
+                            if (city.countryName && !city.stateCode) {
+                                searchQuery += `, ${city.countryName}`;
+                            }
+
+                            const response = await fetch(
+                                `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchQuery)}`,
+                            );
+                            const data = await response.json();
+
+                            return {
+                                name: city.name,
+                                image: data.thumbnail?.source,
+                                description: data.extract,
+                                wikiLink: data.content_urls?.desktop?.page,
+                            };
+                        } catch (error) {
+                            return { name: city.name };
+                        }
+                    }),
+                );
+
+                setCityInfo(info);
+            }
+        };
+
+        fetchCityInfo();
+    }, [isGameComplete, completedCities]);
 
     return (
         <div className="relative w-full h-dvh">
@@ -259,39 +315,81 @@ export default function CityFindingGlobe() {
                 </div>
             </Card>
 
-            <Modal hideCloseButton isDismissable={false} isOpen={isOpen}>
+            <Modal
+                hideCloseButton
+                backdrop="blur"
+                isDismissable={false}
+                isOpen={isOpen}
+                scrollBehavior="inside"
+            >
                 <ModalContent>
-                    <ModalHeader className="flex flex-col gap-1" />
-                    <ModalBody className="text-center">
-                        <p className="text-xl mb-4">
+                    <ModalHeader className="flex flex-col gap-1">
+                        <p className="text-xl text-center">
                             {`🎉 You've found all ${citiesToFind} cities! 🎉`}
                         </p>
-                        <p className="text-2xl font-bold">
+                        <p className="text-2xl font-bold text-center">
                             Final Time: {Math.floor(timer / 60)}:
                             {(timer % 60).toString().padStart(2, "0")}
                         </p>
-
-                        {/* Play Again / Home buttons */}
-                        <div className="flex gap-2 mt-4">
-                            <Button
-                                fullWidth
-                                className=""
-                                color="primary"
-                                onPress={() => router.push("/")}
-                            >
-                                Home
-                            </Button>
-                            <Button
-                                fullWidth
-                                className=""
-                                color="success"
-                                onPress={() => window.location.reload()}
-                            >
-                                Play Again
-                            </Button>
-                        </div>
+                    </ModalHeader>
+                    <ModalBody>
+                        <Swiper
+                            pagination
+                            className="w-full h-screen" // h-screen is needed to keep dots from being cut off, not sure why
+                            modules={[Pagination]}
+                            spaceBetween={30}
+                        >
+                            {cityInfo.map((city, index) => (
+                                <SwiperSlide key={index}>
+                                    <div className="flex flex-col items-center">
+                                        <h3 className="text-xl font-bold mb-2">
+                                            {city.name}
+                                        </h3>
+                                        {city.image && (
+                                            <img
+                                                alt={city.name}
+                                                className="w-full h-40 object-cover rounded-lg mb-2"
+                                                src={city.image}
+                                            />
+                                        )}
+                                        {city.description && (
+                                            <p className="text-sm mb-2 line-clamp-3">
+                                                {city.description}
+                                            </p>
+                                        )}
+                                        {city.wikiLink && (
+                                            <a
+                                                className="text-blue-500 hover:underline pb-4"
+                                                href={city.wikiLink}
+                                                rel="noopener noreferrer"
+                                                target="_blank"
+                                            >
+                                                Learn More
+                                            </a>
+                                        )}
+                                    </div>
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
                     </ModalBody>
-                    <ModalFooter />
+                    <ModalFooter>
+                        <Button
+                            fullWidth
+                            className=""
+                            color="primary"
+                            onPress={() => router.push("/")}
+                        >
+                            Home
+                        </Button>
+                        <Button
+                            fullWidth
+                            className=""
+                            color="success"
+                            onPress={() => window.location.reload()}
+                        >
+                            Play Again
+                        </Button>
+                    </ModalFooter>
                 </ModalContent>
             </Modal>
         </div>

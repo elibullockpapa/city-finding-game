@@ -32,7 +32,8 @@
         "next-themes": "^0.2.1",
         "react": "18.3.1",
         "react-dom": "18.3.1",
-        "react-toastify": "^10.0.6"
+        "react-toastify": "^10.0.6",
+        "swiper": "^11.1.14"
     },
     "devDependencies": {
         "@types/google.maps": "^3.58.1",
