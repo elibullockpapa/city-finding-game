@@ -240,8 +240,8 @@ export default function CityFindingGlobe() {
                 {selectedMarker && <Marker3D position={selectedMarker} />}
             </Map3D>
 
-            <Card className="absolute top-16 left-4 p-4 z-10 w-96">
-                <div className="text-lg font-bold">
+            <Card className="absolute left-4 right-4 top-16 md:left-4 md:right-auto md:w-96 p-4 z-10">
+                <div className="text-lg font-bold break-words">
                     {`Search For: ${currentCity?.name}`}
                 </div>
                 <div className="text-sm">
@@ -249,9 +249,11 @@ export default function CityFindingGlobe() {
                         .toString()
                         .padStart(2, "0")} (${cityCount + 1}/${citiesToFind})`}
                 </div>
-                <div className="flex gap-2 mt-4">
+                <div className="flex flex-wrap gap-2 mt-4">
                     <Button
+                        className="flex-1 min-w-[100px]"
                         color="danger"
+                        size="sm"
                         variant="flat"
                         onPress={async () => {
                             setTimer((prev) => prev + 60);
@@ -265,7 +267,9 @@ export default function CityFindingGlobe() {
                     {allowedCountries.length === 1 &&
                     allowedCountries[0] === "United States" ? (
                         <Button
+                            className="flex-1 min-w-[100px]"
                             color={showCountry ? "default" : "danger"}
+                            size="sm"
                             variant="flat"
                             onPress={() => {
                                 if (!showCountry) {
@@ -281,7 +285,9 @@ export default function CityFindingGlobe() {
                     ) : (
                         // Show country button
                         <Button
+                            className="flex-1 min-w-[100px]"
                             color={showCountry ? "default" : "danger"}
+                            size="sm"
                             variant="flat"
                             onPress={() => {
                                 if (!showCountry) {
@@ -298,7 +304,9 @@ export default function CityFindingGlobe() {
 
                     {/* Show population */}
                     <Button
+                        className="flex-1 min-w-[100px]"
                         color={showPopulation ? "default" : "danger"}
+                        size="sm"
                         variant="flat"
                         onPress={() => {
                             if (!showPopulation) {
