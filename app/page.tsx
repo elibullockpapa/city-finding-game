@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 // Difficulty presets
 const DIFFICULTY_SETTINGS = {
     easy: {
-        minPop: 5_000_000,
+        minPop: 7_000_000,
         maxPop: 100_000_000,
         cities: 3,
         noLabels: false,
