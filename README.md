@@ -1,3 +1,3 @@
 # cityFindingGame
 
-deployment check 1
+deployment check 2
