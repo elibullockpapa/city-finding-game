@@ -296,13 +296,13 @@ export default function CityFindingGlobe() {
                         onPress={() => {
                             if (!showPopulation) {
                                 setShowPopulation(true);
-                                setTimer((prev) => prev + 10);
+                                setTimer((prev) => prev + 2);
                             }
                         }}
                     >
                         {showPopulation
                             ? `${currentCity?.population?.toLocaleString()}`
-                            : "Population (+10)"}
+                            : "Population (+2)"}
                     </Button>
                 </div>
                 <div className="flex gap-2 mt-2">
