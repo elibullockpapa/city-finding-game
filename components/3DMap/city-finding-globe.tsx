@@ -28,7 +28,7 @@ import { calculateDistance } from "@/functions/distance";
 
 // Begin game far above New York City
 const INITIAL_VIEW_PROPS = {
-    center: { lat: 40.7079, lng: -74.0132, altitude: 150000 },
+    center: { lat: 40.7079, lng: -74.0132, altitude: 15000000 },
     range: 0,
     heading: 0,
     tilt: 0,
