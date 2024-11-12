@@ -228,7 +228,7 @@ export default function CityFindingGlobe() {
                 {selectedMarker && <Marker3D position={selectedMarker} />}
             </Map3D>
 
-            <Card className="absolute top-28 left-4 p-4 z-10 w-96">
+            <Card className="absolute top-16 left-4 p-4 z-10 w-96">
                 <div className="text-lg font-bold">
                     {`Search For: ${currentCity?.name}`}
                 </div>
