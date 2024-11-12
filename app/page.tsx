@@ -55,7 +55,7 @@ const DIFFICULTY_SETTINGS: Record<string, DifficultySettings> = {
     },
     usa: {
         name: "USA Mode",
-        minPop: 100_000,
+        minPop: 200_000,
         cities: 5,
         noLabels: false,
         allowedCountries: ["United States"],

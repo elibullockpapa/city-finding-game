@@ -67,6 +67,9 @@ export default function CityFindingGlobe() {
     const allowedCountries = searchParams.get("allowedCountries")
         ? JSON.parse(searchParams.get("allowedCountries")!)
         : [];
+    const excludedCountries = searchParams.get("excludedCountries")
+        ? JSON.parse(searchParams.get("excludedCountries")!)
+        : [];
 
     // useEffect for initial component mount, starts the timer and loads the initial city
     useEffect(() => {
@@ -76,13 +79,14 @@ export default function CityFindingGlobe() {
             setTimer((prev) => prev + 1);
         }, 1000);
 
-        // Load initial city
+        // Load initial city with updated options
         const loadInitialCity = async () => {
-            const city = await getRandomCity(
+            const city = await getRandomCity({
                 minPopulation,
                 maxPopulation,
                 allowedCountries,
-            );
+                excludedCountries,
+            });
 
             setCurrentCity(city);
         };
@@ -102,11 +106,12 @@ export default function CityFindingGlobe() {
         setShowPopulation(false);
 
         while (!city || city.name === currentCity?.name) {
-            city = await getRandomCity(
+            city = await getRandomCity({
                 minPopulation,
                 maxPopulation,
                 allowedCountries,
-            );
+                excludedCountries,
+            });
         }
 
         setCurrentCity(city);
