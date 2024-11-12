@@ -13,7 +13,7 @@ import {
     useDisclosure,
 } from "@nextui-org/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ToastContainer, toast } from "react-toastify";
+import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { Navbar } from "../navbar";
@@ -114,10 +114,6 @@ export default function CityFindingGlobe() {
                         <p>Correct!</p>
                         <p className="text-sm">{`Going to city ${newCityCount + 1} of ${citiesToFind}...`}</p>
                     </div>,
-                    {
-                        position: "bottom-right",
-                        autoClose: 2000,
-                    },
                 );
                 loadNewCity();
             }
@@ -125,13 +121,9 @@ export default function CityFindingGlobe() {
             setTimer((prev) => prev + 5);
             toast.error(
                 <div>
-                    <p>{`You're ${Math.round(distance)} miles away from ${currentCity.name}`}</p>
+                    <p>{`${Math.round(distance)} miles away from ${currentCity.name}`}</p>
                     <p className="text-sm">+5 second penalty</p>
                 </div>,
-                {
-                    position: "bottom-right",
-                    autoClose: 3000,
-                },
             );
         }
     };
@@ -149,7 +141,19 @@ export default function CityFindingGlobe() {
 
     return (
         <div className="relative w-full h-dvh">
-            <ToastContainer />
+            <ToastContainer
+                closeOnClick
+                draggable
+                hideProgressBar
+                newestOnTop
+                pauseOnFocusLoss
+                pauseOnHover
+                autoClose={3000}
+                position="bottom-right"
+                rtl={false}
+                theme="colored"
+                transition={Bounce}
+            />
             <Navbar />
             <Map3D
                 {...viewProps}

@@ -52,7 +52,7 @@ export default function Home() {
     };
 
     return (
-        <div className="h-[calc(100vh-100px)] flex flex-col items-center justify-center">
+        <div className="h-dvh flex flex-col items-center justify-center">
             <Card className="p-8 max-w-2xl w-full items-center">
                 <h1 className="text-4xl font-bold text-center mb-4">
                     City Finding Game

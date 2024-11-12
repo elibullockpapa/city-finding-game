@@ -31,7 +31,7 @@ export const Navbar = () => {
                     <Link
                         isExternal
                         aria-label="Github"
-                        href="https://github.com/elibullockpapa/Google3DMapsChallenge"
+                        href="https://github.com/elibullockpapa/cityFindingGame"
                     >
                         <GithubIcon className="text-default-500" />
                     </Link>
