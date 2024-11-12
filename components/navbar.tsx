@@ -10,21 +10,18 @@ import NextLink from "next/link";
 import AccountButton from "./accountButton";
 
 import { ThemeSwitch } from "@/components/theme-switch";
-import { GithubIcon, Logo } from "@/components/icons";
+import { GithubIcon } from "@/components/icons";
 
 export const Navbar = () => {
     return (
-        <NextUINavbar maxWidth="xl" position="sticky">
+        <NextUINavbar height="48px" maxWidth="xl" position="sticky">
             <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
                 <NavbarBrand as="li" className="gap-3 max-w-fit">
                     <NextLink
                         className="flex justify-start items-center gap-1"
                         href="/"
                     >
-                        <Logo />
-                        <p className="font-bold text-inherit">
-                            City Finding Game
-                        </p>
+                        <p className="text-xl pr">🌍</p>
                     </NextLink>
                 </NavbarBrand>
             </NavbarContent>

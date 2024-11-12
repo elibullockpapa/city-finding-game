@@ -5,11 +5,11 @@ interface CityCoordinates {
     lat: number;
 }
 
-interface City {
+export interface City {
     name: string;
-    cou_name_en: string;
+    countryName: string;
     population: number;
-    modification_date: string;
+    modificationDate: string;
     timezone: string;
     coordinates: CityCoordinates;
 }
@@ -20,7 +20,7 @@ export async function getRandomCity(
 ): Promise<City | null> {
     try {
         // Fetch the cities data
-        const response = await fetch("/cityData/filteredCities.json");
+        const response = await fetch("/filteredCities.json");
         const cities: City[] = await response.json();
 
         // Filter cities based on population criteria

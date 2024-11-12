@@ -8,9 +8,9 @@ with open('allCities.json', 'r') as f:
 filtered_cities = [
     {
         "name": city["name"],
-        "cou_name_en": city["cou_name_en"],
+        "countryName": city["cou_name_en"],
         "population": city["population"],
-        "modification_date": city["modification_date"],
+        "modificationDate": city["modification_date"],
         "timezone": city["timezone"],
         "coordinates": city["coordinates"]
     }
