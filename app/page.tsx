@@ -2,8 +2,17 @@
 import { Button, Card } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 
-// Difficulty presets
-const DIFFICULTY_SETTINGS = {
+// Add this type definition before DIFFICULTY_SETTINGS
+type DifficultySettings = {
+    minPop: number;
+    maxPop: number;
+    cities: number;
+    noLabels: boolean;
+    allowedCountries?: string[];
+};
+
+// Update the const declaration
+const DIFFICULTY_SETTINGS: Record<string, DifficultySettings> = {
     easy: {
         minPop: 7_000_000,
         maxPop: 100_000_000,
@@ -34,6 +43,13 @@ const DIFFICULTY_SETTINGS = {
         cities: 5,
         noLabels: true,
     },
+    usa: {
+        minPop: 100_000,
+        maxPop: 100_000_000,
+        cities: 5,
+        noLabels: false,
+        allowedCountries: ["United States"],
+    },
 };
 
 export default function Home() {
@@ -46,6 +62,9 @@ export default function Home() {
             maxPop: settings.maxPop.toString(),
             cities: settings.cities.toString(),
             noLabels: settings.noLabels.toString(),
+            allowedCountries: settings.allowedCountries
+                ? JSON.stringify(settings.allowedCountries)
+                : "[]",
         });
 
         router.push(`/play?${params.toString()}`);
@@ -66,41 +85,62 @@ export default function Home() {
 
                 <div className="flex flex-col gap-4 w-full max-w-sm">
                     <Button
-                        color="success"
+                        color="primary"
                         size="lg"
+                        variant="ghost"
                         onPress={() => startGame("easy")}
                     >
+                        <span className="text-2xl mr-1">🌟</span>
                         Easy Mode
                     </Button>
 
                     <Button
                         color="primary"
                         size="lg"
+                        variant="ghost"
+                        onPress={() => startGame("usa")}
+                    >
+                        <span className="text-2xl mr-1">🇺🇸</span>
+                        USA Mode
+                    </Button>
+
+                    <Button
+                        color="primary"
+                        size="lg"
+                        variant="ghost"
                         onPress={() => startGame("medium")}
                     >
+                        <span className="text-2xl mr-1">🎯</span>
                         Medium Mode
                     </Button>
 
                     <Button
-                        color="secondary"
+                        color="primary"
                         size="lg"
+                        variant="ghost"
                         onPress={() => startGame("hard")}
                     >
+                        <span className="text-2xl mr-1">💪</span>
                         Hard Mode
                     </Button>
 
                     <Button
-                        color="danger"
+                        color="primary"
                         size="lg"
+                        variant="ghost"
                         onPress={() => startGame("extreme")}
                     >
+                        <span className="text-2xl mr-1">🔥</span>
                         Extreme Mode
                     </Button>
+
                     <Button
-                        color="default"
+                        color="primary"
                         size="lg"
+                        variant="ghost"
                         onPress={() => startGame("impossible")}
                     >
+                        <span className="text-2xl mr-1">💀</span>
                         Impossible Mode
                     </Button>
                 </div>

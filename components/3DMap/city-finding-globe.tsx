@@ -52,6 +52,9 @@ export default function CityFindingGlobe() {
     const maxPopulation = Number(searchParams.get("maxPop")) || 100_000_000;
     const disableMapLabels = searchParams.get("noLabels") === "true";
     const citiesToFind = Number(searchParams.get("cities")) || 5;
+    const allowedCountries = searchParams.get("allowedCountries")
+        ? JSON.parse(searchParams.get("allowedCountries")!)
+        : [];
 
     // useEffect for initial component mount, starts the timer and loads the initial city
     useEffect(() => {
@@ -63,7 +66,11 @@ export default function CityFindingGlobe() {
 
         // Load initial city
         const loadInitialCity = async () => {
-            const city = await getRandomCity(minPopulation, maxPopulation);
+            const city = await getRandomCity(
+                minPopulation,
+                maxPopulation,
+                allowedCountries,
+            );
 
             setCurrentCity(city);
         };
@@ -83,7 +90,11 @@ export default function CityFindingGlobe() {
         setShowPopulation(false);
 
         while (!city || city.name === currentCity?.name) {
-            city = await getRandomCity(minPopulation, maxPopulation);
+            city = await getRandomCity(
+                minPopulation,
+                maxPopulation,
+                allowedCountries,
+            );
         }
 
         setCurrentCity(city);

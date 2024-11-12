@@ -17,18 +17,26 @@ export interface City {
 export async function getRandomCity(
     minPopulation: number,
     maxPopulation: number,
+    allowedCountries?: string[],
 ): Promise<City | null> {
     try {
         // Fetch the cities data
         const response = await fetch("/filteredCities.json");
         const cities: City[] = await response.json();
 
-        // Filter cities based on population criteria
-        const filteredCities = cities.filter(
-            (city) =>
+        // Filter cities based on population and country criteria
+        const filteredCities = cities.filter((city) => {
+            const matchesPopulation =
                 city.population >= minPopulation &&
-                city.population <= maxPopulation,
-        );
+                city.population <= maxPopulation;
+
+            // If allowedCountries is empty or undefined, don't filter by country
+            const matchesCountry =
+                !allowedCountries?.length ||
+                allowedCountries.includes(city.countryName);
+
+            return matchesPopulation && matchesCountry;
+        });
 
         // If no cities match the criteria, return null
         if (filteredCities.length === 0) {
