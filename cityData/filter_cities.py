@@ -10,9 +10,8 @@ filtered_cities = [
         "name": city["name"],
         "countryName": city["cou_name_en"],
         "population": city["population"],
-        "modificationDate": city["modification_date"],
-        "timezone": city["timezone"],
-        "coordinates": city["coordinates"]
+        "coordinates": city["coordinates"],
+        "stateCode": city["admin1_code"] if city["cou_name_en"] == "United States" else None
     }
     for city in cities
     if city.get('population', 0) >= 10000 and 'coordinates' in city and city['coordinates'] is not None

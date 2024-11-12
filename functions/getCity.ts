@@ -9,9 +9,8 @@ export interface City {
     name: string;
     countryName: string;
     population: number;
-    modificationDate: string;
-    timezone: string;
     coordinates: CityCoordinates;
+    stateCode: string | null;
 }
 
 export async function getRandomCity(

@@ -195,20 +195,43 @@ export default function CityFindingGlobe() {
                     >
                         Skip (+60)
                     </Button>
-                    <Button
-                        color={showCountry ? "default" : "danger"}
-                        variant="flat"
-                        onPress={() => {
-                            if (!showCountry) {
-                                setShowCountry(true);
-                                setTimer((prev) => prev + 30);
-                            }
-                        }}
-                    >
-                        {showCountry
-                            ? `${currentCity?.countryName}`
-                            : "Country (+30)"}
-                    </Button>
+
+                    {/* Show state button if only one country is allowed and it's the USA */}
+                    {allowedCountries.length === 1 &&
+                    allowedCountries[0] === "United States" ? (
+                        <Button
+                            color={showCountry ? "default" : "danger"}
+                            variant="flat"
+                            onPress={() => {
+                                if (!showCountry) {
+                                    setShowCountry(true);
+                                    setTimer((prev) => prev + 30);
+                                }
+                            }}
+                        >
+                            {showCountry
+                                ? `${currentCity?.stateCode}`
+                                : "State (+30)"}
+                        </Button>
+                    ) : (
+                        // Show country button
+                        <Button
+                            color={showCountry ? "default" : "danger"}
+                            variant="flat"
+                            onPress={() => {
+                                if (!showCountry) {
+                                    setShowCountry(true);
+                                    setTimer((prev) => prev + 30);
+                                }
+                            }}
+                        >
+                            {showCountry
+                                ? `${currentCity?.countryName}`
+                                : "Country (+30)"}
+                        </Button>
+                    )}
+
+                    {/* Show population */}
                     <Button
                         color={showPopulation ? "default" : "danger"}
                         variant="flat"
