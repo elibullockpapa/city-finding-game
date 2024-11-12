@@ -11,15 +11,14 @@ import {
     ModalBody,
     ModalFooter,
     useDisclosure,
+    Tabs,
+    Tab,
+    CardBody,
+    CardFooter,
 } from "@nextui-org/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import { Pagination } from "swiper/modules";
 
 import { Marker3D } from "./marker-3d";
 
@@ -29,7 +28,7 @@ import { calculateDistance } from "@/functions/distance";
 
 // Begin game far above New York City
 const INITIAL_VIEW_PROPS = {
-    center: { lat: 40.7079, lng: -74.0132, altitude: 15000000 },
+    center: { lat: 40.7079, lng: -74.0132, altitude: 150000 },
     range: 0,
     heading: 0,
     tilt: 0,
@@ -346,44 +345,61 @@ export default function CityFindingGlobe() {
                         </p>
                     </ModalHeader>
                     <ModalBody>
-                        <Swiper
-                            pagination
-                            className="w-full h-screen" // h-screen is needed to keep dots from being cut off, not sure why
-                            modules={[Pagination]}
-                            spaceBetween={30}
-                        >
-                            {cityInfo.map((city, index) => (
-                                <SwiperSlide key={index}>
-                                    <div className="flex flex-col items-center">
-                                        <h3 className="text-xl font-bold mb-2">
-                                            {city.name}
-                                        </h3>
-                                        {city.image && (
-                                            <img
-                                                alt={city.name}
-                                                className="w-full h-40 object-cover rounded-lg mb-2"
-                                                src={city.image}
-                                            />
-                                        )}
-                                        {city.description && (
-                                            <p className="text-sm mb-2 line-clamp-3">
-                                                {city.description}
-                                            </p>
-                                        )}
-                                        {city.wikiLink && (
-                                            <a
-                                                className="text-blue-500 hover:underline pb-4"
-                                                href={city.wikiLink}
-                                                rel="noopener noreferrer"
-                                                target="_blank"
-                                            >
-                                                Learn More
-                                            </a>
-                                        )}
-                                    </div>
-                                </SwiperSlide>
-                            ))}
-                        </Swiper>
+                        <Tabs aria-label="Game Results">
+                            <Tab key="cities" title="Cities Found">
+                                <div className="grid grid-cols-1 gap-4">
+                                    {cityInfo.map((city, index) => (
+                                        <Card key={index} className="w-full">
+                                            <div className="relative">
+                                                {city.image ? (
+                                                    <img
+                                                        alt={city.name}
+                                                        className="w-full h-[200px] object-cover"
+                                                        src={city.image}
+                                                    />
+                                                ) : (
+                                                    <div className="w-full h-[200px] bg-gray-300" />
+                                                )}
+                                                {/* Title overlay at bottom of image */}
+                                                <div className="absolute flex justify-between bottom-0 w-full bg-black/40 backdrop-blur-sm p-3">
+                                                    <h4 className="text-white font-medium text-xl">
+                                                        {city.name}
+                                                    </h4>
+                                                    {city.wikiLink && (
+                                                        <Button
+                                                            as="a"
+                                                            className="text-tiny min-w-20"
+                                                            color="primary"
+                                                            href={city.wikiLink}
+                                                            radius="full"
+                                                            size="sm"
+                                                            target="_blank"
+                                                        >
+                                                            Learn More
+                                                        </Button>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <CardFooter className="flex justify-between items-center gap-2 px-3 py-2">
+                                                <p className="text-sm text-default-600 line-clamp-3 flex-grow">
+                                                    {city.description}
+                                                </p>
+                                            </CardFooter>
+                                        </Card>
+                                    ))}
+                                </div>
+                            </Tab>
+                            <Tab key="leaderboard" title="Leaderboard">
+                                <Card>
+                                    <CardBody>
+                                        <div className="text-center p-4">
+                                            Leaderboard Coming Soon!
+                                        </div>
+                                    </CardBody>
+                                </Card>
+                            </Tab>
+                        </Tabs>
                     </ModalBody>
                     <ModalFooter>
                         <Button
