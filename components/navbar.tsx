@@ -22,7 +22,9 @@ export const Navbar = () => {
                         href="/"
                     >
                         <Logo />
-                        <p className="font-bold text-inherit">ACME</p>
+                        <p className="font-bold text-inherit">
+                            City Finding Game
+                        </p>
                     </NextLink>
                 </NavbarBrand>
             </NavbarContent>

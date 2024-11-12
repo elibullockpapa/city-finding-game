@@ -7,6 +7,7 @@ import { Marker3D } from "./marker-3d";
 
 import { Map3D, Map3DCameraProps } from "@/components/3DMap/map-3d";
 
+// Begin game far above New York City
 const INITIAL_VIEW_PROPS = {
     center: { lat: 40.7079, lng: -74.0132, altitude: 20000000 },
     range: 0,

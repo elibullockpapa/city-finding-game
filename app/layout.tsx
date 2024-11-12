@@ -8,8 +8,8 @@ import { fontSans } from "@/config/fonts";
 import { Navbar } from "@/components/navbar";
 
 export const metadata: Metadata = {
-    title: "GMaps 3D Challenge",
-    description: "A challenge to use Google Maps 3D map.",
+    title: "City Finding Game",
+    description: "A game to find cities on a 3D map.",
 };
 
 export default function RootLayout({

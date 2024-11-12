@@ -60,7 +60,8 @@ export const Map3D = forwardRef(
             // tilt,
             // range,
             // roll,
-            // children,
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            children, // needed even though unused, not exactly sure why
             ...map3dOptions
         } = props;
 
