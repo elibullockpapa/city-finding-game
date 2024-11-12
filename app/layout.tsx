@@ -22,7 +22,7 @@ export default function RootLayout({
             <body
                 suppressHydrationWarning
                 className={clsx(
-                    "min-h-screen bg-background font-sans antialiased",
+                    "min-h-dvh bg-background font-sans antialiased",
                     fontSans.variable,
                 )}
             >
