@@ -1,15 +1,17 @@
 // app/account/page.tsx
 "use client";
 
+import { SignedOut, SignInButton, SignedIn, UserButton } from "@clerk/nextjs";
+
 const AccountButton = () => {
     return (
         <>
-            {/* <SignedOut>
+            <SignedOut>
                 <SignInButton />
             </SignedOut>
             <SignedIn>
                 <UserButton />
-            </SignedIn> */}
+            </SignedIn>
         </>
     );
 };
