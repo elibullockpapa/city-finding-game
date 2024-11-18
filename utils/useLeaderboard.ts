@@ -31,7 +31,7 @@ import { useSupabase } from "./supabase/client";
 //     user_id text not null default requesting_user_id(),
 //     username TEXT NOT NULL,
 //     profile_picture_url TEXT,
-//     time_seconds INTEGER NOT NULL,
+//     time_seconds DECIMAL(10,3) NOT NULL,  -- Allows 3 decimal places
 //     cities_found INTEGER NOT NULL,
 //     found_cities JSONB NOT NULL,  -- Stores the array of city objects
 //     min_population INTEGER NOT NULL,

@@ -109,8 +109,8 @@ export default function CityFindingGlobe() {
         if (isGameComplete) return; // Stop timer if game is complete
 
         const interval = setInterval(() => {
-            setTimer((prev) => prev + 1);
-        }, 1000);
+            setTimer((prev) => prev + 0.1);
+        }, 100);
 
         // Load initial city with updated options
         const loadInitialCity = async () => {
@@ -209,18 +209,23 @@ export default function CityFindingGlobe() {
                 loadNewCity();
             }
         } else {
-            setTimer((prev) => prev + 5);
+            // Minimum penalty of 1, maximum of 60, otherwise distance/100
+            const penalty = Math.round(
+                Math.min(60, Math.max(1, distance / 100)),
+            );
+
+            setTimer((prev) => prev + penalty);
             setCityProgressList((prevList) => {
                 const updatedList = [...prevList];
 
-                updatedList[currentCityIndex].penalties += 5;
+                updatedList[currentCityIndex].penalties += penalty;
 
                 return updatedList;
             });
             toast.error(
                 <div>
                     <p>{`${Math.round(distance)} miles away from ${cityProgressList[currentCityIndex].city.name}`}</p>
-                    <p className="text-sm">+5 second penalty</p>
+                    <p className="text-sm">+${penalty} second penalty</p>
                 </div>,
                 {
                     toastId: `error-${Math.round(distance)}`,
@@ -334,6 +339,15 @@ export default function CityFindingGlobe() {
         await loadNewCity();
     };
 
+    // Assuming a time value in seconds, format it with leading zeros
+    function formatTime(time: number) {
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        const deciseconds = Math.floor((time % 1) * 10);
+
+        return `${minutes}:${seconds.toString().padStart(2, "0")}.${deciseconds}`;
+    }
+
     return (
         <div className="relative w-full h-dvh">
             <ToastContainer
@@ -360,9 +374,7 @@ export default function CityFindingGlobe() {
                         : `Search For: ${cityProgressList[currentCityIndex]?.city.name}`}
                 </div>
                 <div className="text-sm">
-                    {`Time: ${Math.floor(timer / 60)}:${(timer % 60)
-                        .toString()
-                        .padStart(2, "0")} (${cityCount + 1}/${citiesToFind})`}
+                    {`Time: ${formatTime(timer)} (${cityCount + 1}/${citiesToFind})`}
                 </div>
                 <div className="flex flex-wrap gap-2 mt-4">
                     <Button
@@ -483,8 +495,7 @@ export default function CityFindingGlobe() {
                             {`🎉 You've found all ${citiesToFind} cities! 🎉`}
                         </p>
                         <p className="text-2xl font-bold text-center">
-                            Final Time: {Math.floor(timer / 60)}:
-                            {(timer % 60).toString().padStart(2, "0")}
+                            Final Time: {formatTime(timer)}
                         </p>
                     </ModalHeader>
                     <ModalBody>
@@ -624,11 +635,9 @@ export default function CityFindingGlobe() {
                                                     />
                                                 </TableCell>
                                                 <TableCell>
-                                                    {`${Math.floor(item.time_seconds / 60)}:${(
-                                                        item.time_seconds % 60
-                                                    )
-                                                        .toString()
-                                                        .padStart(2, "0")}`}
+                                                    {formatTime(
+                                                        item.time_seconds,
+                                                    )}
                                                 </TableCell>
                                                 <TableCell>
                                                     {new Date(
