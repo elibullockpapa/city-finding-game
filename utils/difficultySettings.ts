@@ -44,6 +44,7 @@ export const DIFFICULTY_SETTINGS: Record<string, DifficultySettings> = {
     impossible: {
         name: "Impossible Mode",
         minPop: 50_000,
+        maxPop: 1_000_000,
         cities: 5,
         noLabels: true,
         coverImage: "/images/warwick.png",

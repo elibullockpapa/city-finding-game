@@ -118,8 +118,10 @@ export default function Home() {
                                             </h4>
                                             <p className="text-white/60 text-small">
                                                 {settings.cities} cities,{" "}
-                                                {settings.minPop.toLocaleString()}
-                                                + population
+                                                {settings.maxPop
+                                                    ? `${settings.minPop.toLocaleString()} - ${settings.maxPop.toLocaleString()}`
+                                                    : `${settings.minPop.toLocaleString()}+`}{" "}
+                                                population
                                             </p>
                                         </div>
                                         {hoveredCard === difficulty && (
