@@ -2,40 +2,18 @@
 "use client";
 
 import { useCallback, useState, useEffect } from "react";
-import {
-    Button,
-    Card,
-    Modal,
-    ModalContent,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    useDisclosure,
-    Tabs,
-    Tab,
-    CardFooter,
-    Table,
-    TableHeader,
-    TableBody,
-    TableColumn,
-    TableRow,
-    TableCell,
-    User,
-    Spinner,
-} from "@nextui-org/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { Button, Card, useDisclosure } from "@nextui-org/react";
+import { useSearchParams } from "next/navigation";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useUser } from "@clerk/nextjs";
-
-import { Wikipedia_W, Google_G } from "../icons";
 
 import { Marker3D } from "./marker-3d";
+import EndGameModal from "./end-game-modal";
 
 import { Map3D, Map3DCameraProps } from "@/components/3DMap/map-3d";
 import { City, getRandomCity } from "@/utils/getCity";
 import { calculateDistance } from "@/utils/distance";
-import { useLeaderboard } from "@/utils/useLeaderboard";
+import { formatTime } from "@/utils/formatTime";
 
 // Begin game far above New York City
 const INITIAL_VIEW_PROPS = {
@@ -46,24 +24,14 @@ const INITIAL_VIEW_PROPS = {
     roll: 0,
 };
 
-interface CityInfo {
-    name: string;
-    image?: string;
-    description?: string;
-    wikiLink?: string;
-}
-
 interface CityProgress {
     city: City;
     startTime: number;
     penalties: number;
-    info?: CityInfo;
 }
 
 export default function CityFindingGlobe() {
-    const router = useRouter();
     const searchParams = useSearchParams();
-    const { isSignedIn } = useUser();
 
     // States
     const [viewProps, setViewProps] = useState(INITIAL_VIEW_PROPS);
@@ -91,22 +59,6 @@ export default function CityFindingGlobe() {
     const excludedCountries = searchParams.get("excludedCountries")
         ? JSON.parse(searchParams.get("excludedCountries")!)
         : [];
-
-    // Leaderboard
-    const {
-        leaderboard,
-        submitScore,
-        hasMore,
-        loadMore,
-        isLoading,
-        isInitialLoading,
-    } = useLeaderboard({
-        min_population: minPopulation,
-        max_population: maxPopulation,
-        allowed_countries: allowedCountries,
-        excluded_countries: excludedCountries,
-        pageSize: 10,
-    });
 
     // useEffect for initial component mount, starts the timer and loads the initial city
     useEffect(() => {
@@ -250,135 +202,6 @@ export default function CityFindingGlobe() {
         [],
     );
 
-    useEffect(() => {
-        const fetchCityInfo = async () => {
-            if (isGameComplete && cityProgressList.length > 0) {
-                const info = await Promise.all(
-                    cityProgressList.map(async (cityProgress) => {
-                        try {
-                            // Build a more specific search query
-                            let searchQuery = cityProgress.city.name;
-
-                            if (cityProgress.city.stateCode) {
-                                searchQuery += `, ${cityProgress.city.stateCode}`;
-                            }
-                            if (
-                                cityProgress.city.countryName &&
-                                !cityProgress.city.stateCode
-                            ) {
-                                searchQuery += `, ${cityProgress.city.countryName}`;
-                            }
-
-                            // First try direct page lookup
-                            let summaryData;
-
-                            try {
-                                const directResponse = await fetch(
-                                    `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchQuery)}`,
-                                );
-
-                                if (directResponse.ok) {
-                                    summaryData = await directResponse.json();
-                                }
-                            } catch (error) {
-                                // Direct lookup failed, continue to search
-                            }
-
-                            // If direct lookup failed, try searching
-                            if (
-                                !summaryData ||
-                                summaryData.type ===
-                                    "https://mediawiki.org/wiki/HyperSwitch/errors/not_found"
-                            ) {
-                                const searchResponse = await fetch(
-                                    `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(searchQuery)}&format=json&origin=*`,
-                                );
-                                const searchData = await searchResponse.json();
-
-                                if (searchData.query?.search?.length > 0) {
-                                    const bestMatch =
-                                        searchData.query.search[0].title;
-                                    const summaryResponse = await fetch(
-                                        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(bestMatch)}`,
-                                    );
-
-                                    summaryData = await summaryResponse.json();
-                                }
-                            }
-
-                            if (summaryData) {
-                                return {
-                                    name: cityProgress.city.name,
-                                    image: summaryData.thumbnail?.source,
-                                    description: summaryData.extract,
-                                    wikiLink:
-                                        summaryData.content_urls?.desktop?.page,
-                                };
-                            }
-
-                            return { name: cityProgress.city.name };
-                        } catch (error) {
-                            return { name: cityProgress.city.name };
-                        }
-                    }),
-                );
-
-                setCityProgressList((prevList) =>
-                    prevList.map((cityProgress, index) => ({
-                        ...cityProgress,
-                        info: info[index],
-                    })),
-                );
-            }
-        };
-
-        fetchCityInfo();
-    }, [isGameComplete]);
-
-    // Add this new effect to handle game completion and score submission
-    useEffect(() => {
-        if (isGameComplete && cityProgressList.length > 0) {
-            const foundCitiesData = cityProgressList.map(
-                (cityProgress, index) => {
-                    const { city, startTime, penalties } = cityProgress;
-                    const endTime =
-                        cityProgressList[index + 1]?.startTime || timer;
-
-                    return {
-                        name: city.name,
-                        country_name: city.countryName || "",
-                        state_code: city.stateCode,
-                        seconds_spent_searching:
-                            endTime - startTime + penalties,
-                    };
-                },
-            );
-
-            if (isSignedIn) {
-                // Submit the score only if user is signed in
-                submitScore({
-                    time_seconds: timer,
-                    cities_found: cityProgressList.length,
-                    found_cities: foundCitiesData,
-                    min_population: minPopulation,
-                    max_population: maxPopulation,
-                    allowed_countries: allowedCountries,
-                    excluded_countries: excludedCountries,
-                    labels_disabled: disableMapLabels,
-                });
-            } else {
-                toast.warning(
-                    "Sign in to save your score to the leaderboard!",
-                    {
-                        toastId: "signin-warning",
-                        autoClose: 5000,
-                        position: "top-right",
-                    },
-                );
-            }
-        }
-    }, [isGameComplete]);
-
     const handleSkip = async () => {
         setTimer((prev) => prev + 60);
         setCityProgressList((prevList) => {
@@ -390,15 +213,6 @@ export default function CityFindingGlobe() {
         });
         await loadNewCity();
     };
-
-    // Assuming a time value in seconds, format it with leading zeros
-    function formatTime(time: number) {
-        const minutes = Math.floor(time / 60);
-        const seconds = Math.floor(time % 60);
-        const deciseconds = Math.floor((time % 1) * 10);
-
-        return `${minutes}:${seconds.toString().padStart(2, "0")}.${deciseconds}`;
-    }
 
     return (
         <div className="relative w-full h-dvh">
@@ -534,268 +348,12 @@ export default function CityFindingGlobe() {
                 </div>
             </Card>
 
-            <Modal
-                hideCloseButton
-                backdrop="blur"
-                isDismissable={false}
+            <EndGameModal
+                cityProgressList={cityProgressList}
                 isOpen={isOpen}
-                scrollBehavior="inside"
-            >
-                <ModalContent>
-                    <ModalHeader className="flex flex-col gap-1">
-                        <p className="text-xl text-center">
-                            {`🎉 You've found all ${citiesToFind} cities! 🎉`}
-                        </p>
-                        <p className="text-2xl font-bold text-center">
-                            Final Time: {formatTime(timer)}
-                        </p>
-                    </ModalHeader>
-                    <ModalBody>
-                        <Tabs aria-label="Game Results">
-                            {/* Cities Found Tab*/}
-                            <Tab key="cities" title="Cities Found">
-                                <div className="grid grid-cols-1 gap-4">
-                                    {cityProgressList.map(
-                                        (cityProgress, index) => (
-                                            <Card
-                                                key={index}
-                                                className="w-full"
-                                            >
-                                                <div className="relative">
-                                                    {/* Only show image section if we have an image */}
-                                                    {cityProgress.info
-                                                        ?.image ? (
-                                                        <>
-                                                            <img
-                                                                alt={
-                                                                    cityProgress
-                                                                        .city
-                                                                        .name
-                                                                }
-                                                                className="w-full h-[200px] object-cover"
-                                                                src={
-                                                                    cityProgress
-                                                                        .info
-                                                                        .image
-                                                                }
-                                                            />
-                                                            {/* Title overlay at bottom of image */}
-                                                            <div className="absolute flex justify-between bottom-0 w-full bg-black/40 backdrop-blur-sm p-3">
-                                                                <h4 className="text-white font-medium text-xl">
-                                                                    {
-                                                                        cityProgress
-                                                                            .city
-                                                                            .name
-                                                                    }
-                                                                </h4>
-                                                                <div className="flex gap-2">
-                                                                    {cityProgress
-                                                                        .info
-                                                                        ?.wikiLink && (
-                                                                        <Button
-                                                                            isIconOnly
-                                                                            as="a"
-                                                                            className="min-w-12 bg-white"
-                                                                            href={
-                                                                                cityProgress
-                                                                                    .info
-                                                                                    .wikiLink
-                                                                            }
-                                                                            radius="full"
-                                                                            size="sm"
-                                                                            target="_blank"
-                                                                            variant="bordered"
-                                                                        >
-                                                                            <Wikipedia_W
-                                                                                size={
-                                                                                    20
-                                                                                }
-                                                                            />
-                                                                        </Button>
-                                                                    )}
-                                                                    <Button
-                                                                        isIconOnly
-                                                                        as="a"
-                                                                        className="min-w-12 bg-white"
-                                                                        href={`https://www.google.com/search?q=${encodeURIComponent(`${cityProgress.city.name}, ${cityProgress.city.countryName}`)}`}
-                                                                        radius="full"
-                                                                        size="sm"
-                                                                        target="_blank"
-                                                                        variant="bordered"
-                                                                    >
-                                                                        <Google_G
-                                                                            size={
-                                                                                20
-                                                                            }
-                                                                        />
-                                                                    </Button>
-                                                                </div>
-                                                            </div>
-                                                        </>
-                                                    ) : (
-                                                        // Simplified view when no wiki data is available
-                                                        <div className="flex justify-between items-center p-3">
-                                                            <h4 className="font-medium text-xl">
-                                                                {
-                                                                    cityProgress
-                                                                        .city
-                                                                        .name
-                                                                }
-                                                            </h4>
-                                                            <div className="flex gap-2">
-                                                                <Button
-                                                                    isIconOnly
-                                                                    as="a"
-                                                                    className="min-w-12 bg-white"
-                                                                    href={`https://wikipedia.org/w/index.php?search=${encodeURIComponent(`${cityProgress.city.name}, ${cityProgress.city.countryName}`)}`}
-                                                                    radius="full"
-                                                                    size="sm"
-                                                                    target="_blank"
-                                                                    variant="bordered"
-                                                                >
-                                                                    <Wikipedia_W
-                                                                        size={
-                                                                            20
-                                                                        }
-                                                                    />
-                                                                </Button>
-                                                                <Button
-                                                                    isIconOnly
-                                                                    as="a"
-                                                                    className="min-w-12 bg-white"
-                                                                    href={`https://www.google.com/search?q=${encodeURIComponent(`${cityProgress.city.name}, ${cityProgress.city.countryName}`)}`}
-                                                                    radius="full"
-                                                                    size="sm"
-                                                                    target="_blank"
-                                                                    variant="bordered"
-                                                                >
-                                                                    <Google_G
-                                                                        size={
-                                                                            20
-                                                                        }
-                                                                    />
-                                                                </Button>
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-
-                                                {/* Only show footer if we have a description */}
-                                                {cityProgress.info
-                                                    ?.description && (
-                                                    <CardFooter className="flex justify-between items-center gap-2 px-3 py-2">
-                                                        <p className="text-sm text-default-600 line-clamp-3 flex-grow">
-                                                            {
-                                                                cityProgress
-                                                                    .info
-                                                                    .description
-                                                            }
-                                                        </p>
-                                                    </CardFooter>
-                                                )}
-                                            </Card>
-                                        ),
-                                    )}
-                                </div>
-                            </Tab>
-
-                            {/* Leaderboard Tab */}
-                            <Tab key="leaderboard" title="Leaderboard">
-                                <Table
-                                    isHeaderSticky
-                                    aria-label="Leaderboard"
-                                    bottomContent={
-                                        hasMore ? (
-                                            <div className="flex w-full justify-center">
-                                                <Button
-                                                    isDisabled={isLoading}
-                                                    variant="flat"
-                                                    onPress={loadMore}
-                                                >
-                                                    {isLoading && (
-                                                        <Spinner size="sm" />
-                                                    )}
-                                                    Load More
-                                                </Button>
-                                            </div>
-                                        ) : null
-                                    }
-                                    classNames={{
-                                        wrapper:
-                                            "max-h-[400px] overflow-scroll",
-                                        base: "",
-                                        table: "",
-                                    }}
-                                >
-                                    <TableHeader>
-                                        <TableColumn>#</TableColumn>
-                                        <TableColumn>Player</TableColumn>
-                                        <TableColumn>Time</TableColumn>
-                                        <TableColumn>Date</TableColumn>
-                                    </TableHeader>
-                                    <TableBody
-                                        isLoading={isInitialLoading}
-                                        items={leaderboard.map(
-                                            (entry, index) => ({
-                                                ...entry,
-                                                rank: index + 1,
-                                            }),
-                                        )}
-                                        loadingContent={
-                                            <Spinner label="Loading..." />
-                                        }
-                                    >
-                                        {(item) => (
-                                            <TableRow key={item.entry_id}>
-                                                <TableCell>
-                                                    {item.rank}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <User
-                                                        avatarProps={{
-                                                            radius: "lg",
-                                                            src: item.profile_picture_url,
-                                                        }}
-                                                        name={item.username}
-                                                    />
-                                                </TableCell>
-                                                <TableCell>
-                                                    {formatTime(
-                                                        item.time_seconds,
-                                                    )}
-                                                </TableCell>
-                                                <TableCell>
-                                                    {new Date(
-                                                        item.created_at,
-                                                    ).toLocaleDateString()}
-                                                </TableCell>
-                                            </TableRow>
-                                        )}
-                                    </TableBody>
-                                </Table>
-                            </Tab>
-                        </Tabs>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button
-                            fullWidth
-                            className=""
-                            color="primary"
-                            onPress={() => router.push("/")}
-                        >
-                            Home
-                        </Button>
-                        <Button
-                            fullWidth
-                            className=""
-                            color="success"
-                            onPress={() => window.location.reload()}
-                        >
-                            Play Again
-                        </Button>
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
+                timer={timer}
+                onClose={onOpen}
+            />
         </div>
     );
 }
