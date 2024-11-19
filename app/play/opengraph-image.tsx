@@ -11,10 +11,23 @@ export const size = {
 export const contentType = "image/png";
 
 export default async function Image({
-    searchParams,
+    searchParams = {
+        cities: "3",
+        minPop: "7000000",
+        noLabels: "false",
+    },
 }: {
     searchParams: { cities: string; minPop: string; noLabels: string };
 }) {
+    // Load Poppins font
+    const poppinsRegular = fetch(
+        new URL("../../public/fonts/Poppins-Regular.ttf", import.meta.url),
+    ).then((res) => res.arrayBuffer());
+
+    const citiesCount = searchParams.cities || "3";
+    const population = parseInt(searchParams.minPop || "7000000");
+    const labels = searchParams.noLabels || "false";
+
     return new ImageResponse(
         (
             <div
@@ -48,22 +61,22 @@ export default async function Image({
                         color: "#94a3b8",
                     }}
                 >
-                    <p>🎯 {searchParams.cities} cities to find</p>
-                    <p>
-                        👥 Min. population:{" "}
-                        {parseInt(searchParams.minPop).toLocaleString()}
-                    </p>
-                    <p>
-                        🏷️ Labels:{" "}
-                        {searchParams.noLabels === "true"
-                            ? "Hidden"
-                            : "Visible"}
-                    </p>
+                    <p>🎯 {citiesCount} cities to find</p>
+                    <p>👥 Min. population: {population.toLocaleString()}</p>
+                    <p>🏷️ Labels: {labels === "true" ? "Hidden" : "Visible"}</p>
                 </div>
             </div>
         ),
         {
             ...size,
+            fonts: [
+                {
+                    name: "Poppins",
+                    data: await poppinsRegular,
+                    style: "normal",
+                    weight: 400,
+                },
+            ],
         },
     );
 }
