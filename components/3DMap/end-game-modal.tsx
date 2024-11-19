@@ -281,12 +281,6 @@ export default function EndGameModal({
             >
                 {showConfetti && (
                     <ReactConfetti
-                        confettiSource={{
-                            x: windowSize.width / 2,
-                            y: 0,
-                            w: 0,
-                            h: 0,
-                        }}
                         gravity={0.3}
                         height={windowSize.height}
                         initialVelocityY={20}
