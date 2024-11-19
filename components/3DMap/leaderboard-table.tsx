@@ -29,6 +29,8 @@ export default function LeaderboardTable() {
     const excludedCountries = searchParams.get("excludedCountries")
         ? JSON.parse(searchParams.get("excludedCountries")!)
         : [];
+    const disableMapLabels = searchParams.get("noLabels") === "true";
+    const citiesCount = Number(searchParams.get("cities")) || 5;
 
     const { leaderboard, hasMore, loadMore, isLoading, isInitialLoading } =
         useLeaderboard({
@@ -36,6 +38,8 @@ export default function LeaderboardTable() {
             max_population: maxPopulation,
             allowed_countries: allowedCountries,
             excluded_countries: excludedCountries,
+            labels_disabled: disableMapLabels,
+            cities_count: citiesCount,
             pageSize: 10,
         });
 
