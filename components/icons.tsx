@@ -118,3 +118,278 @@ export const SearchIcon = (props: IconSvgProps) => (
         />
     </svg>
 );
+
+export const Wikipedia_W = ({
+    size = 24,
+    width,
+    height,
+    ...props
+}: IconSvgProps) => (
+    <svg
+        height={size || height}
+        viewBox="0 0 128 128"
+        width={size || width}
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+    >
+        <defs>
+            <linearGradient id="j">
+                <stop
+                    offset={0}
+                    style={{
+                        stopColor: "#fff",
+                        stopOpacity: 0,
+                    }}
+                />
+                <stop
+                    offset={0.5}
+                    style={{
+                        stopColor: "#fff",
+                        stopOpacity: 0,
+                    }}
+                />
+                <stop
+                    offset={1}
+                    style={{
+                        stopColor: "#fff",
+                        stopOpacity: 1,
+                    }}
+                />
+            </linearGradient>
+            <linearGradient id="i">
+                <stop
+                    offset={0}
+                    style={{
+                        stopColor: "#0e7309",
+                        stopOpacity: 1,
+                    }}
+                />
+                <stop
+                    offset={1}
+                    style={{
+                        stopColor: "#70d13e",
+                        stopOpacity: 1,
+                    }}
+                />
+            </linearGradient>
+            <linearGradient id="h">
+                <stop
+                    offset={0}
+                    style={{
+                        stopColor: "#2c8300",
+                        stopOpacity: 1,
+                    }}
+                />
+                <stop
+                    offset={0.25}
+                    style={{
+                        stopColor: "#3db800",
+                        stopOpacity: 1,
+                    }}
+                />
+                <stop
+                    offset={0.5}
+                    style={{
+                        stopColor: "#fff",
+                        stopOpacity: 1,
+                    }}
+                />
+                <stop
+                    offset={1}
+                    style={{
+                        stopColor: "#69cf35",
+                        stopOpacity: 1,
+                    }}
+                />
+            </linearGradient>
+            <linearGradient id="g">
+                <stop
+                    offset={0}
+                    style={{
+                        stopColor: "#002f32",
+                        stopOpacity: 1,
+                    }}
+                />
+                <stop
+                    offset={1}
+                    style={{
+                        stopColor: "#045b04",
+                        stopOpacity: 1,
+                    }}
+                />
+            </linearGradient>
+            <linearGradient id="f">
+                <stop
+                    offset={0}
+                    style={{
+                        stopColor: "#e8e8e8",
+                        stopOpacity: 1,
+                    }}
+                />
+                <stop
+                    offset={0.5}
+                    style={{
+                        stopColor: "#fff",
+                        stopOpacity: 1,
+                    }}
+                />
+                <stop
+                    offset={1}
+                    style={{
+                        stopColor: "#e8e8e8",
+                        stopOpacity: 1,
+                    }}
+                />
+            </linearGradient>
+            <linearGradient id="e">
+                <stop
+                    offset={0}
+                    style={{
+                        stopColor: "#fff",
+                        stopOpacity: 1,
+                    }}
+                />
+                <stop
+                    offset={0.5}
+                    style={{
+                        stopColor: "#fdd99a",
+                        stopOpacity: 1,
+                    }}
+                />
+                <stop
+                    offset={1}
+                    style={{
+                        stopColor: "#c39539",
+                        stopOpacity: 1,
+                    }}
+                />
+            </linearGradient>
+            <linearGradient id="d">
+                <stop
+                    offset={0}
+                    style={{
+                        stopColor: "#7d491f",
+                        stopOpacity: 1,
+                    }}
+                />
+                <stop
+                    offset={1}
+                    style={{
+                        stopColor: "#926600",
+                        stopOpacity: 1,
+                    }}
+                />
+            </linearGradient>
+            <linearGradient id="c">
+                <stop
+                    offset={0}
+                    style={{
+                        stopColor: "#fff",
+                        stopOpacity: 0,
+                    }}
+                />
+                <stop
+                    offset={1}
+                    style={{
+                        stopColor: "#fff",
+                        stopOpacity: 1,
+                    }}
+                />
+            </linearGradient>
+            <linearGradient id="b">
+                <stop
+                    offset={0}
+                    style={{
+                        stopColor: "#fff",
+                        stopOpacity: 1,
+                    }}
+                />
+                <stop
+                    offset={1}
+                    style={{
+                        stopColor: "#5eb2ff",
+                        stopOpacity: 1,
+                    }}
+                />
+            </linearGradient>
+            <linearGradient id="a">
+                <stop
+                    offset={0}
+                    style={{
+                        stopColor: "#0917a0",
+                        stopOpacity: 1,
+                    }}
+                />
+                <stop
+                    offset={1}
+                    style={{
+                        stopColor: "#0345f4",
+                        stopOpacity: 1,
+                    }}
+                />
+            </linearGradient>
+        </defs>
+        <path
+            d="M95.869 23.91v2.138c-2.822.501-4.957 1.388-6.407 2.66-2.077 1.888-4.525 4.778-6.132 8.67l-32.685 66.713H48.47L15.657 36.51c-1.528-3.468-3.606-5.588-4.233-6.358a10.28 10.28 0 0 0-3.614-2.804c-1.43-.675-3.36-1.108-5.79-1.3v-2.14h31.928v2.14c-3.683.346-5.44.963-6.537 1.849-1.097.886-1.645 2.023-1.645 3.41 0 1.928.9 4.934 2.703 9.019l24.233 45.959 23.692-45.38c1.842-4.471 3.37-7.574 3.37-9.308 0-1.118-.568-2.187-1.705-3.209-1.136-1.02-2.422-1.744-5.125-2.168a37.477 37.477 0 0 0-1-.173V23.91H95.87z"
+            style={{
+                fontSize: "178.22499084px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                fill: "#000",
+                fillOpacity: 1,
+                stroke: "none",
+                strokeWidth: 1,
+                strokeLinecap: "butt",
+                strokeLinejoin: "miter",
+                strokeOpacity: 1,
+                fontFamily: "Times New Roman",
+            }}
+            transform="translate(1)"
+        />
+        <path
+            d="M123.98 23.91v2.138c-2.821.501-4.957 1.388-6.407 2.66-2.076 1.888-4.525 4.778-6.132 8.67l-28.685 66.713H80.58L50.268 36.51c-1.528-3.468-3.606-5.588-4.232-6.358a10.28 10.28 0 0 0-3.615-2.804c-1.43-.675-2.726-1.108-5.156-1.3v-2.14H68.56v2.14c-3.683.346-5.44.963-6.536 1.849-1.098.886-1.646 2.023-1.646 3.41 0 1.928.901 4.934 2.704 9.019l21.732 45.959 19.693-45.38c1.841-4.471 3.37-7.574 3.37-9.308 0-1.118-.569-2.187-1.705-3.209-1.137-1.02-3.057-1.744-5.76-2.168a37.474 37.474 0 0 0-1-.173V23.91h24.569z"
+            style={{
+                fontSize: "178.22499084px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                fill: "#000",
+                fillOpacity: 1,
+                stroke: "none",
+                strokeWidth: 1,
+                strokeLinecap: "butt",
+                strokeLinejoin: "miter",
+                strokeOpacity: 1,
+                fontFamily: "Times New Roman",
+            }}
+            transform="translate(1)"
+        />
+    </svg>
+);
+
+export const Google_G = ({ size = 24, ...props }: IconSvgProps) => (
+    <svg
+        height={size}
+        viewBox="0 0 24 24"
+        width={size}
+        xmlns="http://www.w3.org/2000/svg"
+        {...props}
+    >
+        <path
+            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+            fill="#4285F4"
+        />
+        <path
+            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+            fill="#34A853"
+        />
+        <path
+            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+            fill="#FBBC05"
+        />
+        <path
+            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+            fill="#EA4335"
+        />
+        <path d="M1 1h22v22H1z" fill="none" />
+    </svg>
+);

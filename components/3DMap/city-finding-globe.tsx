@@ -28,6 +28,8 @@ import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useUser } from "@clerk/nextjs";
 
+import { Wikipedia_W, Google_G } from "../icons";
+
 import { Marker3D } from "./marker-3d";
 
 import { Map3D, Map3DCameraProps } from "@/components/3DMap/map-3d";
@@ -267,17 +269,54 @@ export default function CityFindingGlobe() {
                                 searchQuery += `, ${cityProgress.city.countryName}`;
                             }
 
-                            const response = await fetch(
-                                `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchQuery)}`,
-                            );
-                            const data = await response.json();
+                            // First try direct page lookup
+                            let summaryData;
 
-                            return {
-                                name: cityProgress.city.name,
-                                image: data.thumbnail?.source,
-                                description: data.extract,
-                                wikiLink: data.content_urls?.desktop?.page,
-                            };
+                            try {
+                                const directResponse = await fetch(
+                                    `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(searchQuery)}`,
+                                );
+
+                                if (directResponse.ok) {
+                                    summaryData = await directResponse.json();
+                                }
+                            } catch (error) {
+                                // Direct lookup failed, continue to search
+                            }
+
+                            // If direct lookup failed, try searching
+                            if (
+                                !summaryData ||
+                                summaryData.type ===
+                                    "https://mediawiki.org/wiki/HyperSwitch/errors/not_found"
+                            ) {
+                                const searchResponse = await fetch(
+                                    `https://en.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(searchQuery)}&format=json&origin=*`,
+                                );
+                                const searchData = await searchResponse.json();
+
+                                if (searchData.query?.search?.length > 0) {
+                                    const bestMatch =
+                                        searchData.query.search[0].title;
+                                    const summaryResponse = await fetch(
+                                        `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(bestMatch)}`,
+                                    );
+
+                                    summaryData = await summaryResponse.json();
+                                }
+                            }
+
+                            if (summaryData) {
+                                return {
+                                    name: cityProgress.city.name,
+                                    image: summaryData.thumbnail?.source,
+                                    description: summaryData.extract,
+                                    wikiLink:
+                                        summaryData.content_urls?.desktop?.page,
+                                };
+                            }
+
+                            return { name: cityProgress.city.name };
                         } catch (error) {
                             return { name: cityProgress.city.name };
                         }
@@ -523,61 +562,137 @@ export default function CityFindingGlobe() {
                                                 className="w-full"
                                             >
                                                 <div className="relative">
-                                                    {/* City Image */}
+                                                    {/* Only show image section if we have an image */}
                                                     {cityProgress.info
                                                         ?.image ? (
-                                                        <img
-                                                            alt={
-                                                                cityProgress
-                                                                    .city.name
-                                                            }
-                                                            className="w-full h-[200px] object-cover"
-                                                            src={
-                                                                cityProgress
-                                                                    .info.image
-                                                            }
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full h-[200px] bg-gray-300" />
-                                                    )}
-
-                                                    {/* Title overlay at bottom of image */}
-                                                    <div className="absolute flex justify-between bottom-0 w-full bg-black/40 backdrop-blur-sm p-3">
-                                                        <h4 className="text-white font-medium text-xl">
-                                                            {
-                                                                cityProgress
-                                                                    .city.name
-                                                            }
-                                                        </h4>
-                                                        {cityProgress.info
-                                                            ?.wikiLink && (
-                                                            <Button
-                                                                as="a"
-                                                                className="text-tiny min-w-20"
-                                                                color="primary"
-                                                                href={
+                                                        <>
+                                                            <img
+                                                                alt={
+                                                                    cityProgress
+                                                                        .city
+                                                                        .name
+                                                                }
+                                                                className="w-full h-[200px] object-cover"
+                                                                src={
                                                                     cityProgress
                                                                         .info
-                                                                        .wikiLink
+                                                                        .image
                                                                 }
-                                                                radius="full"
-                                                                size="sm"
-                                                                target="_blank"
-                                                            >
-                                                                Learn More
-                                                            </Button>
-                                                        )}
-                                                    </div>
+                                                            />
+                                                            {/* Title overlay at bottom of image */}
+                                                            <div className="absolute flex justify-between bottom-0 w-full bg-black/40 backdrop-blur-sm p-3">
+                                                                <h4 className="text-white font-medium text-xl">
+                                                                    {
+                                                                        cityProgress
+                                                                            .city
+                                                                            .name
+                                                                    }
+                                                                </h4>
+                                                                <div className="flex gap-2">
+                                                                    {cityProgress
+                                                                        .info
+                                                                        ?.wikiLink && (
+                                                                        <Button
+                                                                            isIconOnly
+                                                                            as="a"
+                                                                            className="min-w-12 bg-white"
+                                                                            href={
+                                                                                cityProgress
+                                                                                    .info
+                                                                                    .wikiLink
+                                                                            }
+                                                                            radius="full"
+                                                                            size="sm"
+                                                                            target="_blank"
+                                                                            variant="bordered"
+                                                                        >
+                                                                            <Wikipedia_W
+                                                                                size={
+                                                                                    20
+                                                                                }
+                                                                            />
+                                                                        </Button>
+                                                                    )}
+                                                                    <Button
+                                                                        isIconOnly
+                                                                        as="a"
+                                                                        className="min-w-12 bg-white"
+                                                                        href={`https://www.google.com/search?q=${encodeURIComponent(`${cityProgress.city.name}, ${cityProgress.city.countryName}`)}`}
+                                                                        radius="full"
+                                                                        size="sm"
+                                                                        target="_blank"
+                                                                        variant="bordered"
+                                                                    >
+                                                                        <Google_G
+                                                                            size={
+                                                                                20
+                                                                            }
+                                                                        />
+                                                                    </Button>
+                                                                </div>
+                                                            </div>
+                                                        </>
+                                                    ) : (
+                                                        // Simplified view when no wiki data is available
+                                                        <div className="flex justify-between items-center p-3">
+                                                            <h4 className="font-medium text-xl">
+                                                                {
+                                                                    cityProgress
+                                                                        .city
+                                                                        .name
+                                                                }
+                                                            </h4>
+                                                            <div className="flex gap-2">
+                                                                <Button
+                                                                    isIconOnly
+                                                                    as="a"
+                                                                    className="min-w-12 bg-white"
+                                                                    href={`https://wikipedia.org/w/index.php?search=${encodeURIComponent(`${cityProgress.city.name}, ${cityProgress.city.countryName}`)}`}
+                                                                    radius="full"
+                                                                    size="sm"
+                                                                    target="_blank"
+                                                                    variant="bordered"
+                                                                >
+                                                                    <Wikipedia_W
+                                                                        size={
+                                                                            20
+                                                                        }
+                                                                    />
+                                                                </Button>
+                                                                <Button
+                                                                    isIconOnly
+                                                                    as="a"
+                                                                    className="min-w-12 bg-white"
+                                                                    href={`https://www.google.com/search?q=${encodeURIComponent(`${cityProgress.city.name}, ${cityProgress.city.countryName}`)}`}
+                                                                    radius="full"
+                                                                    size="sm"
+                                                                    target="_blank"
+                                                                    variant="bordered"
+                                                                >
+                                                                    <Google_G
+                                                                        size={
+                                                                            20
+                                                                        }
+                                                                    />
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </div>
 
-                                                <CardFooter className="flex justify-between items-center gap-2 px-3 py-2">
-                                                    <p className="text-sm text-default-600 line-clamp-3 flex-grow">
-                                                        {
-                                                            cityProgress.info
-                                                                ?.description
-                                                        }
-                                                    </p>
-                                                </CardFooter>
+                                                {/* Only show footer if we have a description */}
+                                                {cityProgress.info
+                                                    ?.description && (
+                                                    <CardFooter className="flex justify-between items-center gap-2 px-3 py-2">
+                                                        <p className="text-sm text-default-600 line-clamp-3 flex-grow">
+                                                            {
+                                                                cityProgress
+                                                                    .info
+                                                                    .description
+                                                            }
+                                                        </p>
+                                                    </CardFooter>
+                                                )}
                                             </Card>
                                         ),
                                     )}
@@ -598,10 +713,7 @@ export default function CityFindingGlobe() {
                                                     onPress={loadMore}
                                                 >
                                                     {isLoading && (
-                                                        <Spinner
-                                                            color="white"
-                                                            size="sm"
-                                                        />
+                                                        <Spinner size="sm" />
                                                     )}
                                                     Load More
                                                 </Button>
