@@ -31,7 +31,7 @@ type DifficultySettings = {
 };
 
 // Update the const declaration
-const DIFFICULTY_SETTINGS: Record<string, DifficultySettings> = {
+export const DIFFICULTY_SETTINGS: Record<string, DifficultySettings> = {
     easy: {
         name: "Easy Mode",
         minPop: 7_000_000,
