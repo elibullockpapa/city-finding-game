@@ -4,7 +4,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { useUser } from "@clerk/nextjs";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAsyncList } from "@react-stately/data";
 
 import { useSupabase } from "./supabase/client";
@@ -178,7 +178,6 @@ export function useLeaderboard(filters?: LeaderboardFilters) {
     const client = useSupabase();
     const { user, isLoaded: isUserLoaded } = useUser();
     const [isInitialLoading, setIsInitialLoading] = useState(true);
-
     const [total, setTotal] = useState<number>(0);
 
     const list = useAsyncList<LeaderboardEntry>({
@@ -195,10 +194,7 @@ export function useLeaderboard(filters?: LeaderboardFilters) {
             });
 
             setTotal(result.total);
-
-            if (!cursor) {
-                setIsInitialLoading(false);
-            }
+            setIsInitialLoading(false);
 
             return {
                 items: result.data,
@@ -209,6 +205,13 @@ export function useLeaderboard(filters?: LeaderboardFilters) {
             };
         },
     });
+
+    // Single effect to handle initial load when client is available
+    useEffect(() => {
+        if (client) {
+            list.reload();
+        }
+    }, [client]);
 
     // Mutation for submitting scores
     const submitScoreMutation = useMutation({

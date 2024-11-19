@@ -26,6 +26,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useUser } from "@clerk/nextjs";
 
 import { Marker3D } from "./marker-3d";
 
@@ -60,6 +61,7 @@ interface CityProgress {
 export default function CityFindingGlobe() {
     const router = useRouter();
     const searchParams = useSearchParams();
+    const { isSignedIn } = useUser();
 
     // States
     const [viewProps, setViewProps] = useState(INITIAL_VIEW_PROPS);
@@ -313,17 +315,28 @@ export default function CityFindingGlobe() {
                 },
             );
 
-            // Submit the score
-            submitScore({
-                time_seconds: timer,
-                cities_found: cityProgressList.length,
-                found_cities: foundCitiesData,
-                min_population: minPopulation,
-                max_population: maxPopulation,
-                allowed_countries: allowedCountries,
-                excluded_countries: excludedCountries,
-                labels_disabled: disableMapLabels,
-            });
+            if (isSignedIn) {
+                // Submit the score only if user is signed in
+                submitScore({
+                    time_seconds: timer,
+                    cities_found: cityProgressList.length,
+                    found_cities: foundCitiesData,
+                    min_population: minPopulation,
+                    max_population: maxPopulation,
+                    allowed_countries: allowedCountries,
+                    excluded_countries: excludedCountries,
+                    labels_disabled: disableMapLabels,
+                });
+            } else {
+                toast.warning(
+                    "Sign in to save your score to the leaderboard!",
+                    {
+                        toastId: "signin-warning",
+                        autoClose: 5000,
+                        position: "top-right",
+                    },
+                );
+            }
         }
     }, [isGameComplete]);
 
