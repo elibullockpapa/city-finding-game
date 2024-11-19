@@ -17,6 +17,7 @@ import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import ReactConfetti from "react-confetti";
+import { useUser } from "@clerk/nextjs";
 
 import { Wikipedia_W, Google_G, Share } from "../icons";
 
@@ -62,6 +63,7 @@ export default function EndGameModal({
     const [cityInfo, setCityInfo] = useState<(CityInfo | undefined)[]>([]);
     const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
     const [showConfetti, setShowConfetti] = useState(false);
+    const { isSignedIn } = useUser();
 
     useEffect(() => {
         const fetchCityInfo = async () => {
@@ -358,7 +360,19 @@ export default function EndGameModal({
 
                             {/* Leaderboard Tab */}
                             <Tab key="leaderboard" title="Leaderboard">
-                                <LeaderboardTable />
+                                <div className="flex flex-col gap-4">
+                                    {!isSignedIn && (
+                                        <Card className="bg-warning-50 border-warning-200 border-2">
+                                            <CardFooter className="flex items-center gap-2 px-4 py-3">
+                                                <p className="text-warning-700 font-medium">
+                                                    Sign in to save your record
+                                                    to the leaderboard!
+                                                </p>
+                                            </CardFooter>
+                                        </Card>
+                                    )}
+                                    <LeaderboardTable />
+                                </div>
                             </Tab>
                         </Tabs>
                     </ModalBody>
@@ -372,18 +386,18 @@ export default function EndGameModal({
                         </Button>
                         <Button
                             fullWidth
-                            color="success"
-                            onPress={() => window.location.reload()}
-                        >
-                            Play Again
-                        </Button>
-                        <Button
-                            fullWidth
                             startContent={<Share size={24} />}
                             variant="bordered"
                             onPress={handleShare}
                         >
                             Share
+                        </Button>
+                        <Button
+                            fullWidth
+                            color="success"
+                            onPress={() => window.location.reload()}
+                        >
+                            Play Again
                         </Button>
                     </ModalFooter>
                 </ModalContent>
