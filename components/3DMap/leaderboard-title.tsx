@@ -9,7 +9,7 @@ import {
 } from "@nextui-org/react";
 
 import { InfoIcon } from "@/components/icons";
-import { DIFFICULTY_SETTINGS } from "@/app/page";
+import { DIFFICULTY_SETTINGS } from "@/utils/difficultySettings";
 
 export default function LeaderboardTitle() {
     const searchParams = useSearchParams();
