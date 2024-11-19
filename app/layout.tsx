@@ -11,7 +11,7 @@ import { Navbar } from "@/components/navbar";
 
 export const metadata: Metadata = {
     title: "City Finding Game",
-    description: "Your description here",
+    description: "Test your speed at finding cities",
     icons: {
         icon: [
             {
