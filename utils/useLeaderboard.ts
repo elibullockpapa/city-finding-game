@@ -100,8 +100,6 @@ const fetchLeaderboard = async (
     const from = (page - 1) * pageSize;
     const to = from + pageSize - 1;
 
-    console.log(`Fetching leaderboard from ${from} to ${to}`);
-
     let query = client
         .from("leaderboard")
         .select("*", { count: "exact" })

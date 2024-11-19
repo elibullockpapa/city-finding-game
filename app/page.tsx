@@ -7,9 +7,15 @@ import {
     CardFooter,
     Image,
     useDisclosure,
+    Dropdown,
+    DropdownTrigger,
+    DropdownMenu,
+    DropdownItem,
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
+import { ThreeDots } from "@/components/icons";
 import { CustomGameModal } from "@/components/customGameModal";
 
 // Add this type definition before DIFFICULTY_SETTINGS
@@ -82,6 +88,7 @@ const DIFFICULTY_SETTINGS: Record<string, DifficultySettings> = {
 export default function Home() {
     const router = useRouter();
     const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
     const startGame = (difficulty: keyof typeof DIFFICULTY_SETTINGS) => {
         if (difficulty === "custom") {
@@ -166,16 +173,72 @@ export default function Home() {
                                 key={difficulty}
                                 isFooterBlurred
                                 className="w-full h-[300px] col-span-12 sm:col-span-6 lg:col-span-4"
+                                onMouseEnter={() => setHoveredCard(difficulty)}
+                                onMouseLeave={() => setHoveredCard(null)}
                             >
                                 <CardHeader className="absolute z-10 top-1 flex-col items-start bg-gray-800/5 backdrop-blur-lg rounded-none -mt-1">
-                                    <h4 className="text-white font-medium text-2xl">
-                                        {settings.name}
-                                    </h4>
-                                    <p className="text-white/60 text-small">
-                                        {settings.cities} cities,{" "}
-                                        {settings.minPop.toLocaleString()}+
-                                        population
-                                    </p>
+                                    <div className="w-full flex justify-between items-start">
+                                        <div>
+                                            <h4 className="text-white font-medium text-2xl">
+                                                {settings.name}
+                                            </h4>
+                                            <p className="text-white/60 text-small">
+                                                {settings.cities} cities,{" "}
+                                                {settings.minPop.toLocaleString()}
+                                                + population
+                                            </p>
+                                        </div>
+                                        {hoveredCard === difficulty && (
+                                            <Dropdown>
+                                                <DropdownTrigger>
+                                                    <Button
+                                                        isIconOnly
+                                                        className="text-white fill-slate-400"
+                                                        variant="light"
+                                                    >
+                                                        <ThreeDots />
+                                                    </Button>
+                                                </DropdownTrigger>
+                                                <DropdownMenu aria-label="Card actions">
+                                                    <DropdownItem
+                                                        key="leaderboard"
+                                                        onPress={() => {
+                                                            const searchParams =
+                                                                new URLSearchParams(
+                                                                    {
+                                                                        minPop: settings.minPop.toString(),
+                                                                        cities: settings.cities.toString(),
+                                                                        noLabels:
+                                                                            settings.noLabels.toString(),
+                                                                        ...(settings.allowedCountries && {
+                                                                            allowedCountries:
+                                                                                JSON.stringify(
+                                                                                    settings.allowedCountries,
+                                                                                ),
+                                                                        }),
+                                                                        ...(settings.excludedCountries && {
+                                                                            excludedCountries:
+                                                                                JSON.stringify(
+                                                                                    settings.excludedCountries,
+                                                                                ),
+                                                                        }),
+                                                                        ...(settings.maxPop && {
+                                                                            maxPop: settings.maxPop.toString(),
+                                                                        }),
+                                                                    },
+                                                                );
+
+                                                            router.push(
+                                                                `/leaderboard?${searchParams.toString()}`,
+                                                            );
+                                                        }}
+                                                    >
+                                                        View Leaderboard
+                                                    </DropdownItem>
+                                                </DropdownMenu>
+                                            </Dropdown>
+                                        )}
+                                    </div>
                                 </CardHeader>
                                 <Image
                                     removeWrapper

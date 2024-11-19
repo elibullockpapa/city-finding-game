@@ -14,6 +14,7 @@ import { Map3D, Map3DCameraProps } from "@/components/3DMap/map-3d";
 import { City, getRandomCity } from "@/utils/getCity";
 import { calculateDistance } from "@/utils/distance";
 import { formatTime } from "@/utils/formatTime";
+import { useLeaderboard } from "@/utils/useLeaderboard";
 
 // Begin game far above New York City
 const INITIAL_VIEW_PROPS = {
@@ -47,6 +48,7 @@ export default function CityFindingGlobe() {
         [],
     );
     const [currentCityIndex, setCurrentCityIndex] = useState<number>(0);
+    const { submitScore } = useLeaderboard();
 
     // URL parameters with fallback values
     const minPopulation = Number(searchParams.get("minPop")) || 500_000;
@@ -150,6 +152,21 @@ export default function CityFindingGlobe() {
 
             if (newCityCount >= citiesToFind) {
                 setIsGameComplete(true);
+                submitScore({
+                    time_seconds: timer,
+                    cities_found: citiesToFind,
+                    found_cities: cityProgressList.map((progress) => ({
+                        name: progress.city.name,
+                        country_name: progress.city.countryName,
+                        state_code: progress.city.stateCode || null,
+                        seconds_spent_searching: progress.penalties,
+                    })),
+                    min_population: minPopulation,
+                    max_population: maxPopulation,
+                    allowed_countries: allowedCountries,
+                    excluded_countries: excludedCountries,
+                    labels_disabled: disableMapLabels,
+                });
                 onOpen();
             } else {
                 toast.success(
