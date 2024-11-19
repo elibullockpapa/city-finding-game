@@ -25,7 +25,12 @@ country_name_mappings = {
     "Swaziland": "Eswatini",
     "Hong Kong, China": "Hong Kong",
     "Macau, China": "Macau",
-    "West Bank and Gaza Strip": "Palestine"
+    "West Bank and Gaza Strip": "Palestine",
+    "Côte d'Ivoire": "Ivory Coast",
+    "Brunei Darussalam": "Brunei",
+    "Timor-Leste": "East Timor",
+    "Sao Tome and Principe": "São Tomé and Príncipe",
+    "Virgin Islands (US)": "U.S. Virgin Islands"
 }
 
 # Filter cities and retain only required fields
@@ -55,10 +60,10 @@ print(f"Combined population of filtered cities: {combined_population}")
 country_names = sorted(set(city["countryName"] for city in filtered_cities))
 print("\nList of countries:")
 for country in country_names:
-    print(f"- {country}")
+    print(f"{country}")
 
 # Save the filtered data back to a new JSON file without Unicode escaping
-with open('./public/NEW_filteredCities.json', 'w') as f:
+with open('./public/filteredCities.json', 'w') as f:
     json.dump(filtered_cities, f, indent=4, ensure_ascii=False)
 
-print("Filtered cities saved to filteredCities.json")
+print("Filtered cities saved to ./public/filteredCities.json")
