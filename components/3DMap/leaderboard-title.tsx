@@ -6,7 +6,7 @@ import {
     Popover,
     PopoverTrigger,
     PopoverContent,
-} from "@nextui-org/react";
+} from "@heroui/react";
 
 import { InfoIcon } from "@/components/icons";
 import { DIFFICULTY_SETTINGS } from "@/utils/difficultySettings";

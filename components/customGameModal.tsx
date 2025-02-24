@@ -12,7 +12,7 @@ import {
     Checkbox,
     Select,
     SelectItem,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useState } from "react";
 
 type CustomGameModalProps = {
@@ -92,31 +92,25 @@ export function CustomGameModal({
                                     <Select
                                         fullWidth
                                         label="Country Selection"
-                                        selectedKeys={[countryMode]}
+                                        selectedKeys={new Set([countryMode])}
                                         onChange={(e) => {
                                             setCountryMode(
                                                 e.target.value as
-                                                    | "all"
-                                                    | "allowed"
-                                                    | "excluded",
+                                                | "all"
+                                                | "allowed"
+                                                | "excluded",
                                             );
                                             setAllowedCountries([]);
                                             setExcludedCountries([]);
                                         }}
                                     >
-                                        <SelectItem key="all" value="all">
+                                        <SelectItem key="all">
                                             Include all countries
                                         </SelectItem>
-                                        <SelectItem
-                                            key="allowed"
-                                            value="allowed"
-                                        >
+                                        <SelectItem key="allowed">
                                             Only include selected countries
                                         </SelectItem>
-                                        <SelectItem
-                                            key="excluded"
-                                            value="excluded"
-                                        >
+                                        <SelectItem key="excluded">
                                             Include all except selected
                                             countries
                                         </SelectItem>
@@ -140,20 +134,19 @@ export function CustomGameModal({
                                                     keys,
                                                 ) as string[];
 
-                                                countryMode === "allowed"
-                                                    ? setAllowedCountries(
-                                                          countries,
-                                                      )
-                                                    : setExcludedCountries(
-                                                          countries,
-                                                      );
+                                                if (countryMode === "allowed") {
+                                                    setAllowedCountries(
+                                                        countries,
+                                                    );
+                                                } else {
+                                                    setExcludedCountries(
+                                                        countries,
+                                                    );
+                                                }
                                             }}
                                         >
                                             {countryNames.map((country) => (
-                                                <SelectItem
-                                                    key={country}
-                                                    value={country}
-                                                >
+                                                <SelectItem key={country}>
                                                     {country}
                                                 </SelectItem>
                                             ))}

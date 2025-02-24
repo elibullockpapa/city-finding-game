@@ -2,7 +2,7 @@
 "use client";
 
 import { useCallback, useState, useEffect } from "react";
-import { Button, Card, useDisclosure } from "@nextui-org/react";
+import { Button, Card, useDisclosure } from "@heroui/react";
 import { useSearchParams } from "next/navigation";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,7 +12,7 @@ import EndGameModal from "./end-game-modal";
 
 import { Map3D, Map3DCameraProps } from "@/components/3DMap/map-3d";
 import { City, getRandomCity } from "@/utils/getCity";
-import { calculateDistance } from "@/utils/distance";
+import { calculateDistanceInMiles } from "@/utils/distance";
 import { formatTime } from "@/utils/formatTime";
 import { useLeaderboard } from "@/utils/useLeaderboard";
 
@@ -49,6 +49,7 @@ export default function CityFindingGlobe() {
     );
     const [currentCityIndex, setCurrentCityIndex] = useState<number>(0);
     const { submitScore } = useLeaderboard();
+    const [useMetric, setUseMetric] = useState(false);
 
     // URL parameters with fallback values
     const minPopulation = Number(searchParams.get("minPop")) || 500_000;
@@ -98,6 +99,21 @@ export default function CityFindingGlobe() {
         };
     }, [isGameComplete]);
 
+    // Add this useEffect to detect user's locale on component mount
+    useEffect(() => {
+        // Countries that use imperial system (miles)
+        const imperialCountries = ["US", "GB", "LR", "MM"];
+
+        // Get user's locale from browser
+        const userLocale =
+            navigator.language ||
+            (navigator.languages && navigator.languages[0]);
+        const userCountry = userLocale?.split("-")[1] || "";
+
+        // Set to metric if not in imperial countries
+        setUseMetric(!imperialCountries.includes(userCountry));
+    }, []);
+
     // Helper function to load a new city (not the initial)
     const loadNewCity = async () => {
         let city: City | null = null;
@@ -138,7 +154,7 @@ export default function CityFindingGlobe() {
         if (!selectedMarker || !cityProgressList[currentCityIndex]?.city)
             return;
 
-        const distance = calculateDistance(
+        const distance = calculateDistanceInMiles(
             selectedMarker.lat,
             selectedMarker.lng,
             cityProgressList[currentCityIndex].city.coordinates.lat,
@@ -195,10 +211,17 @@ export default function CityFindingGlobe() {
 
                 return updatedList;
             });
+
+            // Convert distance to km if metric is preferred
+            const displayDistance = useMetric
+                ? Math.round(distance * 1.60934)
+                : Math.round(distance);
+            const unit = useMetric ? "km" : "miles";
+
             toast.error(
                 <div>
-                    <p>{`${Math.round(distance)} miles away from ${cityProgressList[currentCityIndex].city.name}`}</p>
-                    <p className="text-sm">+${penalty} second penalty</p>
+                    <p>{`${displayDistance} ${unit} away from ${cityProgressList[currentCityIndex].city.name}`}</p>
+                    <p className="text-sm">+{penalty} second penalty</p>
                 </div>,
                 {
                     toastId: `error-${Math.round(distance)}`,
@@ -232,7 +255,7 @@ export default function CityFindingGlobe() {
     };
 
     return (
-        <div className="relative w-full h-dvh">
+        (<div className="relative w-full h-dvh">
             <ToastContainer
                 draggable
                 hideProgressBar
@@ -249,7 +272,6 @@ export default function CityFindingGlobe() {
             >
                 {selectedMarker && <Marker3D position={selectedMarker} />}
             </Map3D>
-
             <Card className="absolute left-4 right-4 top-16 md:left-4 md:right-auto md:w-96 p-4 z-10">
                 <div className="text-lg font-bold break-words">
                     {!cityProgressList[currentCityIndex]?.city
@@ -272,7 +294,7 @@ export default function CityFindingGlobe() {
 
                     {/* Show state button if only one country is allowed and it's the USA */}
                     {allowedCountries.length === 1 &&
-                    allowedCountries[0] === "United States" ? (
+                        allowedCountries[0] === "United States" ? (
                         <Button
                             className="flex-1 min-w-[100px]"
                             color={showCountry ? "default" : "danger"}
@@ -300,7 +322,7 @@ export default function CityFindingGlobe() {
                         </Button>
                     ) : (
                         // Show country button
-                        <Button
+                        (<Button
                             className="flex-1 min-w-[100px]"
                             color={showCountry ? "default" : "danger"}
                             size="sm"
@@ -324,7 +346,7 @@ export default function CityFindingGlobe() {
                             {showCountry
                                 ? `${cityProgressList[currentCityIndex]?.city.countryName}`
                                 : "Country (+30)"}
-                        </Button>
+                        </Button>)
                     )}
 
                     {/* Show population */}
@@ -364,13 +386,12 @@ export default function CityFindingGlobe() {
                     </Button>
                 </div>
             </Card>
-
             <EndGameModal
                 cityProgressList={cityProgressList}
                 isOpen={isOpen}
                 timer={timer}
                 onClose={onOpen}
             />
-        </div>
+        </div>)
     );
 }

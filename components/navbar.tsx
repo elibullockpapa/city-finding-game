@@ -3,8 +3,8 @@ import {
     NavbarContent,
     NavbarBrand,
     NavbarItem,
-} from "@nextui-org/navbar";
-import { Link } from "@nextui-org/link";
+} from "@heroui/navbar";
+import { Link } from "@heroui/link";
 import NextLink from "next/link";
 
 import AccountButton from "./accountButton";

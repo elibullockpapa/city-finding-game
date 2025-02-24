@@ -11,7 +11,7 @@ import {
     TableRow,
     TableCell,
     User,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { useSearchParams } from "next/navigation";
 
 import { useLeaderboard } from "@/utils/useLeaderboard";

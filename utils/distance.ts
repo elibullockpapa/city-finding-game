@@ -4,7 +4,7 @@ function toRadians(degrees: number): number {
     return degrees * (Math.PI / 180);
 }
 
-export function calculateDistance(
+export function calculateDistanceInMiles(
     lat1: number,
     lon1: number,
     lat2: number,

@@ -12,7 +12,7 @@ import {
     Tab,
     Card,
     CardFooter,
-} from "@nextui-org/react";
+} from "@heroui/react";
 import { Bounce, ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";

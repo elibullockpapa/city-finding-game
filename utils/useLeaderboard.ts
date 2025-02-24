@@ -115,6 +115,7 @@ const fetchLeaderboard = async (
         query = query.eq("max_population", filters.max_population);
     }
     if (filters?.cities_count) {
+        console.log("cities_found", filters.cities_count);
         query = query.eq("cities_found", filters.cities_count);
     }
     if (filters?.labels_disabled !== undefined) {
